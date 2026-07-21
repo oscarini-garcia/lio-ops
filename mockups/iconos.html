@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Las Mañanas de Lio — Propuesta de iconos</title>
+<style>
+:root {
+  --mist: #f1f0ea; --card: #ffffff; --ink: #232020; --ink-soft: #7d776e;
+  --line: #e2dfd6; --sunrise: #e89b3c; --shadow: 0 6px 24px rgba(35,32,32,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --mist: #1b1a18; --card: #262421; --ink: #efeae1; --ink-soft: #a39c90; --line: #38352f; --shadow: 0 6px 24px rgba(0,0,0,0.35); }
+}
+:root[data-theme="light"] { --mist: #f1f0ea; --card: #ffffff; --ink: #232020; --ink-soft: #7d776e; --line: #e2dfd6; --shadow: 0 6px 24px rgba(35,32,32,0.08); }
+:root[data-theme="dark"] { --mist: #1b1a18; --card: #262421; --ink: #efeae1; --ink-soft: #a39c90; --line: #38352f; --shadow: 0 6px 24px rgba(0,0,0,0.35); }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--mist); color: var(--ink);
+  font-family: ui-rounded, "SF Pro Rounded", Quicksand, system-ui, sans-serif;
+  padding: 1.4rem 1rem 3rem;
+}
+.head { max-width: 520px; margin: 0 auto 1.4rem; text-align: center; }
+.head h1 { font-size: 1.4rem; font-weight: 800; margin: 0.2rem 0; }
+.head p { color: var(--ink-soft); font-size: 0.9rem; margin: 0.2rem 0; }
+.card {
+  max-width: 520px; margin: 0 auto 1rem; background: var(--card);
+  border-radius: 22px; box-shadow: var(--shadow); padding: 1.1rem 1.2rem;
+}
+.card h2 { font-size: 1rem; margin: 0 0 0.15rem; }
+.card .why { font-size: 0.82rem; color: var(--ink-soft); margin: 0 0 0.8rem; }
+.strip { display: flex; align-items: flex-end; gap: 1.1rem; border-radius: 16px; padding: 0.9rem 1rem; }
+.strip.light { background: #e9e6de; }
+.strip.dark { background: #161513; }
+.slot { text-align: center; }
+.slot .lbl { font-size: 0.62rem; margin-top: 0.35rem; font-weight: 700; }
+.strip.light .lbl { color: #6b665d; }
+.strip.dark .lbl { color: #9a948a; }
+svg.icon { border-radius: 22.5%; display: block; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+.pill {
+  display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; background: var(--sunrise); color: #2b1d08;
+  border-radius: 99px; padding: 0.2rem 0.6rem; margin-left: 0.4rem; vertical-align: middle;
+}
+.appname { font-size: 0.62rem; font-weight: 600; }
+.strip.light .appname { color: #3a362f; }
+.strip.dark .appname { color: #d8d3c9; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>🐩 Propuesta de iconos</h1>
+  <p>Seis opciones, cada una a tamaño grande (como en el dock) y pequeño (rejilla de apps), sobre fondo claro y oscuro. Di cuál te gusta — o combina («la 2 pero con el fondo de la 5»).</p>
+</div>
+
+<!-- Definiciones reutilizables -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="lio-face">
+      <circle cx="25" cy="55" r="20" fill="#35312c"/><circle cx="95" cy="55" r="20" fill="#35312c"/>
+      <circle cx="45" cy="22" r="14" fill="#403b35"/><circle cx="75" cy="22" r="14" fill="#403b35"/><circle cx="60" cy="16" r="15" fill="#35312c"/>
+      <circle cx="60" cy="60" r="34" fill="#35312c"/>
+      <ellipse cx="60" cy="74" rx="16" ry="12" fill="#453f38"/>
+      <circle cx="47" cy="55" r="4.5" fill="#14120f"/><circle cx="73" cy="55" r="4.5" fill="#14120f"/>
+      <circle cx="48.5" cy="53.5" r="1.5" fill="#fff"/><circle cx="74.5" cy="53.5" r="1.5" fill="#fff"/>
+      <ellipse cx="60" cy="70" rx="6" ry="4.5" fill="#14120f"/>
+      <path d="M55 80 q5 9 10 0 z" fill="#e4737f"/>
+      <circle cx="60" cy="96" r="5" fill="#e89b3c"/>
+    </g>
+    <linearGradient id="dawn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6c35e"/><stop offset="0.55" stop-color="#ef9d55"/><stop offset="1" stop-color="#e8778a"/>
+    </linearGradient>
+    <linearGradient id="nightsky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#232838"/><stop offset="1" stop-color="#16151a"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<script>
+// Renderiza cada variante en 4 tamaños/fondos sin duplicar el SVG a mano
+function strips(inner) {
+  const svg = s => `<svg class="icon" width="${s}" height="${s}" viewBox="0 0 120 120">${inner}</svg>`
+  return `
+    <div class="strip light">
+      <div class="slot">${svg(120)}<div class="appname" style="margin-top:0.3rem">Lio</div><div class="lbl">grande</div></div>
+      <div class="slot">${svg(60)}<div class="appname" style="margin-top:0.3rem">Lio</div><div class="lbl">rejilla</div></div>
+    </div>
+    <div style="height:0.6rem"></div>
+    <div class="strip dark">
+      <div class="slot">${svg(120)}<div class="appname" style="margin-top:0.3rem">Lio</div><div class="lbl">grande</div></div>
+      <div class="slot">${svg(60)}<div class="appname" style="margin-top:0.3rem">Lio</div><div class="lbl">rejilla</div></div>
+    </div>`
+}
+
+const FACE = `<use href="#lio-face"/>`
+
+const VARIANTS = [
+  {
+    n: 1, name: 'Niebla (el actual)', rec: false,
+    why: 'Fondo crema neutro, Lio centrado. Discreto y limpio; es el que la app tiene hoy.',
+    inner: `<rect width="120" height="120" fill="#f1f0ea"/><g transform="translate(0,7)">${FACE}</g>`,
+  },
+  {
+    n: 2, name: 'Amanecer', rec: true,
+    why: 'Degradado de amanecer (el tema de la app es justo ese momento del día). El negro del caniche destaca de lejos y se distingue en la rejilla mejor que el fondo claro.',
+    inner: `<rect width="120" height="120" fill="url(#dawn)"/><circle cx="60" cy="118" r="52" fill="#f6dfa8" opacity="0.35"/><g transform="translate(0,7)">${FACE}</g>`,
+  },
+  {
+    n: 3, name: 'Retrato grande', rec: false,
+    why: 'La cara a sangre, ocupando todo el icono. Máxima presencia de Lio; pierde un poco de aire alrededor.',
+    inner: `<rect width="120" height="120" fill="#f1f0ea"/><g transform="translate(60,64) scale(1.45) translate(-60,-60)">${FACE}</g>`,
+  },
+  {
+    n: 4, name: 'Huella', rec: false,
+    why: 'Una pata negra sobre caléndula: icónico y ultra legible en pequeño, aunque menos «Lio» y más genérico de perro.',
+    inner: `<rect width="120" height="120" fill="#e89b3c"/>
+      <g fill="#232020">
+        <circle cx="41" cy="46" r="10"/><circle cx="60" cy="39" r="10"/><circle cx="79" cy="46" r="10"/>
+        <circle cx="30" cy="64" r="8"/><circle cx="90" cy="64" r="8"/>
+        <ellipse cx="60" cy="80" rx="24" ry="19"/>
+      </g>`,
+  },
+  {
+    n: 5, name: 'Nocturno', rec: false,
+    why: 'Lio bajo la luna, esperando a que amanezca. Elegante y muy vistoso en modo oscuro; en fondos claros contrasta fuerte.',
+    inner: `<rect width="120" height="120" fill="url(#nightsky)"/>
+      <path d="M95 18 a13 13 0 1 0 8 23 a10.5 10.5 0 1 1 -8 -23 z" fill="#f0ac54"/>
+      <circle cx="22" cy="30" r="1.6" fill="#cfd6e4"/><circle cx="38" cy="16" r="1.2" fill="#cfd6e4"/><circle cx="70" cy="24" r="1.3" fill="#cfd6e4"/>
+      <g transform="translate(0,14)">
+        <circle cx="25" cy="55" r="20" fill="#4c463e"/><circle cx="95" cy="55" r="20" fill="#4c463e"/>
+        <circle cx="45" cy="22" r="14" fill="#5a5348"/><circle cx="75" cy="22" r="14" fill="#5a5348"/><circle cx="60" cy="16" r="15" fill="#4c463e"/>
+        <circle cx="60" cy="60" r="34" fill="#4c463e"/>
+        <ellipse cx="60" cy="74" rx="16" ry="12" fill="#5f5749"/>
+        <circle cx="47" cy="55" r="4.5" fill="#14120f"/><circle cx="73" cy="55" r="4.5" fill="#14120f"/>
+        <circle cx="48.5" cy="53.5" r="1.5" fill="#fff"/><circle cx="74.5" cy="53.5" r="1.5" fill="#fff"/>
+        <ellipse cx="60" cy="70" rx="6" ry="4.5" fill="#14120f"/>
+        <circle cx="60" cy="96" r="5" fill="#e89b3c"/>
+      </g>`,
+  },
+  {
+    n: 6, name: 'Pompón mínimo', rec: false,
+    why: 'Silueta abstracta de caniche (moño + orejas) en negro plano sobre caléndula. Moderno y atemporal, sin carita.',
+    inner: `<rect width="120" height="120" fill="#e89b3c"/>
+      <g fill="#232020">
+        <circle cx="60" cy="30" r="17"/>
+        <circle cx="30" cy="62" r="16"/><circle cx="90" cy="62" r="16"/>
+        <circle cx="60" cy="66" r="27"/>
+      </g>
+      <circle cx="60" cy="97" r="5.5" fill="#f1f0ea"/>`,
+  },
+]
+
+document.body.insertAdjacentHTML('beforeend', VARIANTS.map(v => `
+  <div class="card">
+    <h2>${v.n} · ${v.name}${v.rec ? '<span class="pill">recomendado</span>' : ''}</h2>
+    <p class="why">${v.why}</p>
+    ${strips(v.inner)}
+  </div>`).join(''))
+</script>
+</body>
+</html>
