@@ -1,19 +1,47 @@
-# 🐩 Lio's Mornings
+# 🐩 Las Mañanas de Lio
 
-A family web app that answers one question every morning: **who takes Lio out?**
+App familiar que responde una pregunta cada mañana: **¿a quién le toca sacar a
+Lio?** (Lio es un caniche toy negro con opiniones firmes sobre los horarios.)
 
-Lio is a black toy poodle. Marion and Amaya split the weekdays, Ana and Oscar
-split the weekends, and the pattern is configurable in-app. Any change to the
-plan — swaps, covers, travel ranges, or retroactive "I actually walked him" —
-needs the affected person's approval. Some mornings nobody goes out; the app
-tracks that too (Lio forgives, for a treat).
+Mariona y Amaya se reparten los días de diario, Ana y Oscar los findes — y el
+patrón se edita en la propia app. Cualquier cambio sobre el plan (cubrir,
+intercambiar, rangos de viaje o el retroactivo «ese día lo saqué yo») necesita
+la aprobación de la persona afectada. Si una mañana nadie sale, también se
+registra: Lio perdona, pero apunta.
 
-Built on the same approach as Counter Ops: a Vite + React + Tailwind PWA on
-GitHub Pages, no accounts (personal `?member=` links), localStorage-first with
-background sync to a shared JSONBin document.
+## Cómo funciona
 
-## Status
+- **PWA** (Vite + React + Tailwind) desplegada en GitHub Pages — mismo enfoque
+  que Counter Ops.
+- **Sin cuentas**: cada miembro tiene un enlace personal (`?member=oscar`) que
+  añade a su pantalla de inicio; ese enlace es su identidad.
+- **Local-first**: los datos viven en el móvil y se sincronizan en segundo
+  plano con un documento compartido en JSONBin; el merge por entidad hace que
+  varios móviles converjan sin pisarse.
+- **Peticiones con aprobación**: pending → aceptada / rechazada / cancelada /
+  caducada. Aceptar aplica los cambios de calendario en la misma escritura.
+- **Datos divertidos**: racha de Lio, mañanas en casa, madrugador/a del mes,
+  favorito/a de Lio y la deuda matutina (quién debe mañanas a quién).
+- **Avisos**: globo en el icono (iOS 16.4+) para peticiones pendientes; push
+  con OneSignal en la v2.
 
-**Phase A — mockups under review.** Open `mockups/01-today.html` … `05-settings.html`
-in a browser (they share `mockups/mock.css`). The real app comes after the
-mockups are approved.
+## Arrancar
+
+Ver [INSTALL.md](INSTALL.md). Resumen: crear un bin en JSONBin, poner
+`VITE_JSONBIN_ID` y `VITE_JSONBIN_KEY` como variables de Actions, activar
+GitHub Pages (source: GitHub Actions) y hacer merge a `main`.
+
+```sh
+cd app && npm install && npm run dev   # desarrollo
+npm test                               # tests (vitest)
+```
+
+## Estructura
+
+```
+app/src/lib/        horario, peticiones, stats, merge, sync (lógica pura)
+app/src/hooks/      store (reducer), identidad por enlace, ciclo de sync
+app/src/screens/    Hoy · Semana · Peticiones · Datos · Ajustes
+app/src/components/ mascota, avatares, hoja de acciones por día, shell
+mockups/            maquetas HTML aprobadas (fase de diseño)
+```
