@@ -3,6 +3,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useStore, useDispatch } from '../hooks/useStore.jsx'
 import { useMember } from '../hooks/useMember.js'
 import { compressAvatar } from '../lib/imageCompress.js'
+import { pushConfigured, requestPushPermission, getPushStatus } from '../lib/notify.js'
 import { nextAssignments } from '../lib/schedule.js'
 import { todayKey, addDays, weekdayOf, fmtDayMonth, fmtTime } from '../lib/dates.js'
 import { requestSync } from '../hooks/useSync.js'
@@ -165,6 +166,40 @@ function DayEditor({ weekday, label, doc }) {
   )
 }
 
+// Avisos push: globo del icono siempre; OneSignal si la build lleva App ID.
+// En iOS el permiso solo se puede pedir tras un toque y con la app añadida
+// a la pantalla de inicio.
+function PushRow() {
+  const [status, setStatus] = useState('loading')
+  React.useEffect(() => { getPushStatus(setStatus) }, [])
+
+  if (!pushConfigured()) {
+    return <div className="row"><span className="grow sub">Avisos: globo en el icono para peticiones pendientes. Push sin configurar (ver INSTALL.md) 🔔</span></div>
+  }
+
+  const label = {
+    loading: 'Comprobando avisos…',
+    unsupported: 'Este navegador no soporta push — añade la app a la pantalla de inicio y ábrela desde ahí.',
+    enabled: 'Avisos activados en este móvil ✓',
+    off: 'Recibe un aviso cuando te pidan un cambio o te toque salir.',
+  }[status] ?? ''
+
+  return (
+    <div className="row">
+      <span className="grow sub">{label}</span>
+      {status === 'off' && (
+        <span
+          className="act"
+          style={{ cursor: 'pointer' }}
+          onClick={() => requestPushPermission(granted => setStatus(granted ? 'enabled' : 'off'))}
+        >
+          Activar 🔔
+        </span>
+      )}
+    </div>
+  )
+}
+
 export default function SettingsScreen() {
   const { doc, lastSyncAt, syncStatus } = useStore()
   const { member: me } = useMember()
@@ -247,7 +282,7 @@ export default function SettingsScreen() {
           </span>
           <span className="act" style={{ cursor: 'pointer' }} onClick={requestSync}>Sincronizar</span>
         </div>
-        <div className="row"><span className="grow sub">Avisos: globo en el icono para peticiones pendientes. Push en la v2 🔔</span></div>
+        <PushRow />
         <div className="row">
           <span className="grow sub">¿Algo raro en este móvil?</span>
           <span

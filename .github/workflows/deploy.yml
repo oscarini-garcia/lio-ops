@@ -22,6 +22,7 @@ jobs:
         env:
           VITE_JSONBIN_ID: ${{ vars.VITE_JSONBIN_ID }}
           VITE_JSONBIN_KEY: ${{ vars.VITE_JSONBIN_KEY }}
+          VITE_ONESIGNAL_APP_ID: ${{ vars.VITE_ONESIGNAL_APP_ID }}
         run: |
           npm install
           npm test

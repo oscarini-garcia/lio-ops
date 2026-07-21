@@ -44,6 +44,9 @@ export function emptyDoc() {
     walks: {},
     overrides: {},
     requests: [],
+    // Estado auxiliar compartido (p. ej. dedup del recordatorio matutino
+    // que envía la Action de avisos). LWW por updatedAt.
+    meta: { updatedAt: '' },
   }
 }
 
@@ -138,5 +141,6 @@ export function mergeDocs(local, remote) {
     walks: mergeByDate(local.walks, remote.walks),
     overrides: mergeByDate(local.overrides, remote.overrides),
     requests: mergeRequests(local.requests, remote.requests),
+    meta: newer(local.meta ?? { updatedAt: '' }, remote.meta ?? { updatedAt: '' }),
   }
 }

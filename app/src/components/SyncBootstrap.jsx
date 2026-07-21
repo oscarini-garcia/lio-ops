@@ -3,7 +3,7 @@ import { useSync } from '../hooks/useSync.js'
 import { useStore, useDispatch } from '../hooks/useStore.jsx'
 import { useMember } from '../hooks/useMember.js'
 import { pendingForMe } from '../lib/requests.js'
-import { updateBadge } from '../lib/notify.js'
+import { updateBadge, initPush } from '../lib/notify.js'
 
 // Monta el ciclo de sync, barre caducadas al arrancar y mantiene el globo
 // del icono con las peticiones que esperan tu respuesta
@@ -16,6 +16,10 @@ export default function SyncBootstrap() {
   useEffect(() => {
     dispatch({ type: 'SWEEP_EXPIRED' })
   }, [])
+
+  useEffect(() => {
+    if (memberId) initPush(memberId)
+  }, [memberId])
 
   useEffect(() => {
     updateBadge(memberId ? pendingForMe(doc, memberId).length : 0)

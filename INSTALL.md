@@ -48,10 +48,28 @@ npm test               # tests de horario, peticiones y merge
 Sin `.env` la app funciona igualmente en modo "solo local" (sin sincronizar),
 útil para probar.
 
-## Push (v2, pendiente)
+## Avisos push (OneSignal)
 
-Los avisos push entrarán por `src/lib/notify.js` con OneSignal:
-1. Cuenta gratuita en onesignal.com → app Web Push para la URL de Pages.
-2. El App ID se añade al código; la REST API Key va a un secret
-   (`ONESIGNAL_API_KEY`) que usará una GitHub Action para enviar avisos.
-Mientras tanto, la app usa el globo del icono (`setAppBadge`).
+Todo el código ya está montado; solo falta la cuenta. Hasta entonces la app
+funciona igual, con el globo del icono (`setAppBadge`).
+
+1. Cuenta gratuita en [onesignal.com](https://onesignal.com) → **New App** →
+   plataforma **Web** → tipo *Typical Site / Custom Code*:
+   - Site URL: `https://<usuario>.github.io` (el origen exacto de Pages).
+2. En OneSignal → Settings → **Keys & IDs**, apunta el **App ID** y la
+   **REST API Key**.
+3. En GitHub:
+   - Settings → Secrets and variables → Actions → **Variables** →
+     `VITE_ONESIGNAL_APP_ID` = el App ID.
+   - Misma pantalla → pestaña **Secrets** → `ONESIGNAL_API_KEY` = la REST
+     API Key (esta es secreta, nunca como variable).
+4. Relanza el deploy (push a `main` o «Re-run» del workflow) para que la app
+   se construya con el App ID.
+5. Cada persona, desde la app **añadida a la pantalla de inicio** (iOS 16.4+):
+   Ajustes → Sincronización → **Activar 🔔** y aceptar el permiso.
+
+Qué avisa (workflow `Avisos push`, cada 30 min):
+- petición nueva → aviso a quien tiene que responder
+- petición aceptada/rechazada → aviso a quien la pidió
+- recordatorio a quien le toca, entre las 7:00 y las 10:00, si el paseo de
+  hoy sigue sin registrarse (una vez al día)

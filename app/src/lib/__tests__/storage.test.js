@@ -52,6 +52,18 @@ describe('mergeDocs', () => {
     expect(mergeDocs(a, b).schedule.days.mon.memberId).toBe('oscar')
   })
 
+  it('meta (recordatorio de la Action) se conserva y usa last-write-wins', () => {
+    const a = emptyDoc()
+    const b = emptyDoc()
+    b.meta = { remindedFor: '2026-07-21', updatedAt: '2026-07-21T05:30:00Z' }
+    expect(mergeDocs(a, b).meta.remindedFor).toBe('2026-07-21')
+    expect(mergeDocs(b, a).meta.remindedFor).toBe('2026-07-21')
+    // un doc antiguo sin meta no lo borra
+    const legacy = { ...emptyDoc() }
+    delete legacy.meta
+    expect(mergeDocs(b, legacy).meta.remindedFor).toBe('2026-07-21')
+  })
+
   it('un remoto vacío o corrupto no destruye lo local', () => {
     const a = emptyDoc()
     a.walks['2026-07-21'] = { status: 'walked', memberId: 'amaya', updatedAt: 'now' }
