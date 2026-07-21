@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morning Dog Walk</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <h1>🐕 Morning Dog Walk</h1>
+
+    <section id="today-card" class="card">
+      <p class="label">This morning it's</p>
+      <p id="assignee" class="assignee">—</p>
+      <div id="today-actions" class="actions">
+        <button id="done-btn" class="primary">✓ Walked</button>
+        <button id="covered-btn">Someone else walked</button>
+        <button id="skip-btn" class="subtle">Skipped today</button>
+      </div>
+      <p id="today-status" class="status hidden"></p>
+    </section>
+
+    <section class="card">
+      <h2>Household</h2>
+      <ul id="member-list"></ul>
+      <form id="add-member-form">
+        <input id="member-input" type="text" placeholder="Add a person…" autocomplete="off" />
+        <button type="submit">Add</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Walk counts</h2>
+      <ul id="stats-list"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Recent mornings</h2>
+      <ul id="history-list"></ul>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
