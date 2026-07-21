@@ -239,7 +239,7 @@ body {
 .stat .big small { font-size: 0.9rem; font-weight: 700; color: var(--ink-soft); }
 .stat .cap { font-size: 0.78rem; color: var(--ink-soft); margin: 0; }
 .bar-row { display: flex; align-items: center; gap: 0.6rem; margin: 0.45rem 0; font-size: 0.82rem; }
-.bar-row .nm { width: 3.6rem; flex: none; font-weight: 700; }
+.bar-row .nm { width: 4.5rem; flex: none; font-weight: 700; }
 .bar-row .bar { height: 0.85rem; border-radius: 99px; }
 .bar-row .n { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .balance-meter { display: flex; height: 0.9rem; border-radius: 99px; overflow: hidden; margin: 0.6rem 0 0.3rem; }
