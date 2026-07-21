@@ -149,6 +149,35 @@ body {
 .m-ana    .dot { background: #58a274; }
 .m-oscar  .dot { background: #cf8f3e; }
 
+/* Personalised icons: emoji or an uploaded photo instead of initials */
+.avatar .dot.emoji { background: var(--chip); font-size: 0.95rem; }
+.avatar .dot.photo {
+  background:
+    radial-gradient(circle at 35% 32%, #f6d7b0 0 44%, transparent 45%),
+    radial-gradient(circle at 35% 20%, #6b4a33 0 30%, transparent 31%),
+    linear-gradient(160deg, #b8d0da, #7fa3b5);
+}
+.status-line { font-size: 0.82rem; color: var(--ink-soft); font-style: italic; margin: 0; }
+
+/* Tomorrow preview */
+.tomorrow { display: flex; align-items: center; gap: 0.7rem; padding: 0.8rem 1rem; }
+.tomorrow .lbl { font-size: 0.78rem; color: var(--ink-soft); }
+.tomorrow .lbl b { display: block; color: var(--ink); font-size: 0.95rem; }
+.tomorrow .grow { flex: 1; }
+
+/* Icon picker (settings mock) */
+.icon-picker { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+.icon-picker .opt-dot {
+  width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--chip); font-size: 1.1rem; border: 2px solid transparent;
+}
+.icon-picker .opt-dot.sel { border-color: var(--sunrise); }
+.status-input {
+  margin-top: 0.6rem; background: var(--chip); border-radius: 12px;
+  padding: 0.6rem 0.8rem; font-size: 0.85rem; color: var(--ink-soft); font-style: italic;
+}
+
 /* ── Bottom sheet ── */
 .sheet-wrap { position: fixed; inset: 0; background: rgba(20, 18, 16, 0.45); display: flex; align-items: flex-end; z-index: 30; }
 .sheet {
