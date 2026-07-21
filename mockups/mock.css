@@ -13,6 +13,8 @@
   --park: #4f9d69;        /* success green */
   --miss: #b0655e;        /* sad morning */
   --chip: #eceae2;
+  --wknd: #f6ead7;        /* weekend wash: warmed by the sunrise accent */
+  --wknd-ink: #b3762a;
   --shadow: 0 6px 24px rgba(35, 32, 32, 0.08);
 }
 
@@ -29,6 +31,8 @@
     --park: #6cb884;
     --miss: #d08078;
     --chip: #32302b;
+    --wknd: #342b1c;
+    --wknd-ink: #e0a95a;
     --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
   }
 }
@@ -36,12 +40,14 @@
   --mist: #f1f0ea; --card: #ffffff; --ink: #232020; --ink-soft: #7d776e;
   --line: #e2dfd6; --sunrise: #e89b3c; --sunrise-ink: #2b1d08; --collar: #e4737f;
   --park: #4f9d69; --miss: #b0655e; --chip: #eceae2;
+  --wknd: #f6ead7; --wknd-ink: #b3762a;
   --shadow: 0 6px 24px rgba(35, 32, 32, 0.08);
 }
 :root[data-theme="dark"] {
   --mist: #1b1a18; --card: #262421; --ink: #efeae1; --ink-soft: #a39c90;
   --line: #38352f; --sunrise: #f0ac54; --sunrise-ink: #2b1d08; --collar: #e88793;
   --park: #6cb884; --miss: #d08078; --chip: #32302b;
+  --wknd: #342b1c; --wknd-ink: #e0a95a;
   --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
 }
 
@@ -133,6 +139,18 @@ body {
 .day-row.today .d .num { color: var(--sunrise); }
 .day-row .mark.ok { color: var(--park); font-weight: 700; }
 .day-row .mark.sad { color: var(--miss); font-weight: 700; }
+
+/* Weekends get their own color */
+.day-row.weekend {
+  background: var(--wknd); border-radius: 14px; border-bottom: none;
+  padding-left: 0.6rem; padding-right: 0.6rem; margin: 2px 0;
+}
+.day-row.weekend .d .dow, .day-row.weekend .d .num { color: var(--wknd-ink); }
+.row.weekend {
+  background: var(--wknd); border-radius: 14px; border-bottom: none;
+  padding-left: 0.6rem; padding-right: 0.6rem; margin: 2px 0;
+}
+.row.weekend > b { color: var(--wknd-ink); }
 
 .avatar {
   display: inline-flex; align-items: center; gap: 0.45rem;
