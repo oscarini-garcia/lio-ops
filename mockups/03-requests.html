@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Las Mañanas de Lio — Peticiones</title>
+<link rel="stylesheet" href="mock.css" />
+</head>
+<body>
+<main class="screen">
+
+  <header class="app-head">
+    <div>
+      <h1>Peticiones</h1>
+      <p class="date">Tú eres Oscar</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="sync-dot">✓ al día</span>
+  </header>
+
+  <section class="card">
+    <h2>Esperan tu respuesta · 3</h2>
+
+    <div class="req">
+      <div class="head"><span class="avatar m-ana"><span class="dot emoji">🌻</span>Ana</span><span class="what">te pide que la cubras</span></div>
+      <div class="when">Sábado, 25 de julio · <span class="status-line">«Retiro de yoga este finde 🧘»</span></div>
+      <p class="note">«¡Retiro de yoga 🧘 — te deberé una!»</p>
+      <div class="btns"><button class="btn yes">Aceptar 🐾</button><button class="btn no">Rechazar</button></div>
+    </div>
+
+    <div class="req">
+      <div class="head"><span class="avatar m-amaya"><span class="dot emoji">🦋</span>Amaya</span><span class="what">te pide cubrir un viaje</span></div>
+      <div class="when">Mar 28 jul → sáb 8 ago · 8 mañanas</div>
+      <p class="note">«Viaje de trabajo a Bilbao ✈️»</p>
+      <div class="range">
+        28 · 30 jul · 3 · 4 · 5 · 6 · 7 · 8 ago<br/>
+        <b>Omitidos:</b> 29 jul (día de Mariona) · 1–2 ago (finde)
+      </div>
+      <div class="btns"><button class="btn yes">Aceptar las 8</button><button class="btn no">Rechazar</button></div>
+    </div>
+
+    <div class="req">
+      <div class="head"><span class="avatar m-marion"><span class="dot photo"></span>Mariona</span><span class="what">reclama un paseo pasado</span></div>
+      <div class="when">Domingo, 19 de julio — tu mañana, marcada «se quedó en casa»</div>
+      <p class="note">«¡Lo saqué yo, se me olvidó apuntarlo!»</p>
+      <div class="btns"><button class="btn yes">Confirmar — es verdad 🐩</button><button class="btn no">Mmm, no</button></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Esperando a otros</h2>
+    <div class="req">
+      <div class="head"><span class="what">Tú → Ana: cambio</span><span class="state-chip wait">pendiente</span></div>
+      <div class="when">Tu dom 26 jul ↔ su sáb 1 ago</div>
+      <div class="btns"><button class="btn cancel">Cancelar petición</button></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Historial</h2>
+    <div class="req"><div class="head"><span class="what">Amaya cubrió a Mariona · 10 jul</span><span class="state-chip ok">aceptada</span></div></div>
+    <div class="req"><div class="head"><span class="what">Pediste a Ana · 4 jul</span><span class="state-chip no">rechazada</span></div></div>
+  </section>
+
+  <nav class="tabbar">
+    <a href="01-today.html"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="7" cy="8" r="2.2"/><circle cx="12" cy="6.4" r="2.2"/><circle cx="17" cy="8" r="2.2"/><ellipse cx="12" cy="15.5" rx="5" ry="4.2"/></svg>Hoy</a>
+    <a href="02-week.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3.5v3M16 3.5v3"/></svg>Semana</a>
+    <a class="on" href="03-requests.html"><span class="bdg">3</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="m4 7 8 6 8-6"/></svg>Peticiones</a>
+    <a href="04-stats.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 20V12M12 20V6M19 20v-5"/></svg>Datos</a>
+    <a href="05-settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1"/></svg>Ajustes</a>
+  </nav>
+</main>
+</body>
+</html>
