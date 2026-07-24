@@ -252,8 +252,8 @@ export default function SettingsScreen() {
     <>
       <header className="app-head">
         <div>
-          <h1>Ajustes</h1>
-          <p className="date">Familia y horario</p>
+          <h1>Familia</h1>
+          <p className="date">La familia, el horario y los ajustes</p>
         </div>
         <div className="spacer" />
         <SyncDot />

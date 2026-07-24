@@ -105,7 +105,7 @@ export default function RequestsScreen() {
     <>
       <header className="app-head">
         <div>
-          <h1>Peticiones</h1>
+          <h1>Bandeja</h1>
           <p className="date">Tú eres {member?.name ?? '…'}</p>
         </div>
         <div className="spacer" />
@@ -113,13 +113,13 @@ export default function RequestsScreen() {
       </header>
 
       <section className="card">
-        <h2>Esperan tu respuesta · {forMe.length}</h2>
+        <h2>Necesita tu respuesta · {forMe.length}</h2>
         {forMe.length === 0 && <p className="sub" style={{ color: 'var(--ink-soft)' }}>Nada pendiente. Lio está orgulloso 🐩</p>}
         {forMe.map(r => <IncomingCard key={r.id} request={r} doc={doc} />)}
       </section>
 
       <section className="card">
-        <h2>Esperando a otros</h2>
+        <h2>Enviadas · pendientes</h2>
         {fromMe.length === 0 && <p className="sub" style={{ color: 'var(--ink-soft)' }}>No has pedido nada.</p>}
         {fromMe.map(r => (
           <div className="req" key={r.id}>
@@ -134,7 +134,7 @@ export default function RequestsScreen() {
       </section>
 
       <section className="card">
-        <h2>Historial</h2>
+        <h2>Actividad reciente</h2>
         {history.length === 0 && <p className="sub" style={{ color: 'var(--ink-soft)' }}>Aún no hay historia que contar.</p>}
         {history.map(r => {
           const [label, cls] = STATE_ES[r.state] ?? STATE_ES.pending

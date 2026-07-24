@@ -6,44 +6,34 @@ import { requestSync } from '../hooks/useSync.js'
 
 const TABS = [
   {
-    id: 'today', label: 'Hoy',
+    id: 'hilo', label: 'Hilo',
     icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <circle cx="7" cy="8" r="2.2" /><circle cx="12" cy="6.4" r="2.2" /><circle cx="17" cy="8" r="2.2" />
-        <ellipse cx="12" cy="15.5" rx="5" ry="4.2" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M4 5.5h16M4 12h16M4 18.5h10" />
       </svg>
     ),
   },
   {
-    id: 'week', label: 'Semana',
+    id: 'bandeja', label: 'Bandeja',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3.5" y="5" width="17" height="15" rx="3" /><path d="M3.5 10h17M8 3.5v3M16 3.5v3" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+        <path d="M3.5 5.5h17v13h-17z" /><path d="M3.5 13.5H8a2 2 0 0 0 4 0h0a2 2 0 0 0 4 0h4.5" />
       </svg>
     ),
   },
   {
-    id: 'requests', label: 'Peticiones',
+    id: 'datos', label: 'Datos',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="5.5" width="18" height="13" rx="3" /><path d="m4 7 8 6 8-6" />
-      </svg>
-    ),
-  },
-  {
-    id: 'stats', label: 'Datos',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <path d="M5 20V12M12 20V6M19 20v-5" />
       </svg>
     ),
   },
   {
-    id: 'settings', label: 'Ajustes',
+    id: 'familia', label: 'Familia',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="3.2" />
-        <path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="9" cy="8" r="3" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0M15 6.5a3 3 0 0 1 0 6M20.5 19a5 5 0 0 0-3-4.6" />
       </svg>
     ),
   },
@@ -82,7 +72,7 @@ export default function AppShell({ children }) {
             className={activeScreen === tab.id ? 'on' : ''}
             onClick={e => { e.preventDefault(); dispatch({ type: 'SET_ACTIVE_SCREEN', screen: tab.id }) }}
           >
-            {tab.id === 'requests' && badge > 0 && <span className="bdg">{badge}</span>}
+            {tab.id === 'bandeja' && badge > 0 && <span className="bdg">{badge}</span>}
             {tab.icon}
             {tab.label}
           </a>
