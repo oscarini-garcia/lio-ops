@@ -1,17 +1,24 @@
 // Puente con la cáscara nativa (Capacitor). En web todo esto es inofensivo:
-// las funciones detectan que no hay plataforma nativa y no hacen nada, así que
-// el mismo bundle sirve para GitHub Pages y para la app iOS.
+// las funciones detectan que no hay plataforma nativa y hacen el equivalente
+// web, así que el mismo bundle sirve para GitHub Pages y para la app iOS.
 //
 // Responsabilidades:
-//   1. OTA autohospedado: al abrir la app comprueba el último GitHub Release,
-//      y si hay una versión nueva la descarga y la deja lista para el próximo
-//      arranque (sin recargar la sesión en curso).
-//   2. Hápticos: pequeñas vibraciones para confirmar acciones.
+//   1. OTA autohospedado (nativo): al abrir la app comprueba el último GitHub
+//      Release y, si hay versión nueva, la descarga y la deja lista para el
+//      próximo arranque. El botón de Ajustes fuerza el chequeo y la aplica al
+//      momento.
+//   2. Actualización web (PWA): el mismo botón refresca el service worker,
+//      limpia la caché y recarga para traer el último deploy de Pages.
+//   3. Hápticos.
 //
 // El manifiesto OTA (latest.json) lo publica .github/workflows/ota.yml y
 // siempre apunta al release marcado como «latest».
 const OTA_MANIFEST_URL =
   'https://github.com/oscarini-garcia/lio-ops/releases/latest/download/latest.json'
+
+// Versión inyectada en build desde package.json (ver vite.config.js).
+export const APP_VERSION =
+  typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : ''
 
 let capacitorPromise = null
 function loadCapacitor() {
@@ -38,35 +45,93 @@ export async function initNative() {
     // Confirma que el bundle actual arranca bien; sin esto el updater haría
     // rollback al bundle anterior tras unos segundos.
     await CapacitorUpdater.notifyAppReady()
-    await checkForOtaUpdate(CapacitorUpdater)
+    // Al arrancar, si hay actualización se aplica en el PRÓXIMO arranque
+    // (nada de recargas a mitad de uso).
+    await runOtaUpdate(CapacitorUpdater, { applyNow: false })
   } catch (err) {
     console.warn('[native] init falló', err)
   }
 }
 
-async function checkForOtaUpdate(CapacitorUpdater) {
-  try {
-    const res = await fetch(OTA_MANIFEST_URL, { cache: 'no-store' })
-    if (!res.ok) return
-    const manifest = await res.json() // { version, url, checksum? }
-    if (!manifest?.version || !manifest?.url) return
+// Descarga y (opcionalmente) aplica la última versión OTA en nativo.
+// applyNow=false => se aplica en el próximo arranque (`next`).
+// applyNow=true  => se aplica ya, recargando el WebView (`set`).
+async function runOtaUpdate(CapacitorUpdater, { applyNow }) {
+  const res = await fetch(OTA_MANIFEST_URL, { cache: 'no-store' })
+  if (!res.ok) return { updated: false } // aún no hay releases publicados
+  const manifest = await res.json() // { version, url, checksum? }
+  if (!manifest?.version || !manifest?.url) return { updated: false }
 
-    const current = await CapacitorUpdater.current()
-    const currentVersion = current?.bundle?.version
-    if (!isNewer(manifest.version, currentVersion)) return
-
-    const bundle = await CapacitorUpdater.download({
-      url: manifest.url,
-      version: manifest.version,
-      // checksum opcional: solo se pasa si el manifiesto lo trae, para no
-      // romper la descarga si cambia el formato entre versiones del plugin.
-      ...(manifest.checksum ? { checksum: manifest.checksum } : {})
-    })
-    // Aplicar en el PRÓXIMO arranque, no ahora: nada de recargas a mitad de uso.
-    await CapacitorUpdater.next({ id: bundle.id })
-  } catch (err) {
-    console.warn('[native] chequeo OTA falló', err)
+  const current = await CapacitorUpdater.current()
+  if (!isNewer(manifest.version, current?.bundle?.version)) {
+    return { updated: false }
   }
+
+  const bundle = await CapacitorUpdater.download({
+    url: manifest.url,
+    version: manifest.version,
+    // checksum opcional: solo se pasa si el manifiesto lo trae, para no
+    // romper la descarga si cambia el formato entre versiones del plugin.
+    ...(manifest.checksum ? { checksum: manifest.checksum } : {})
+  })
+
+  if (applyNow) {
+    await CapacitorUpdater.set(bundle) // recarga el WebView en la nueva versión
+  } else {
+    await CapacitorUpdater.next({ id: bundle.id }) // se aplica al reiniciar
+  }
+  return { updated: true, version: manifest.version }
+}
+
+// Versión que se está ejecutando ahora mismo (para mostrarla en Ajustes).
+export async function currentVersion() {
+  if (await isNative()) {
+    try {
+      const { CapacitorUpdater } = await import('@capgo/capacitor-updater')
+      const cur = await CapacitorUpdater.current()
+      const v = cur?.bundle?.version
+      // 'builtin' = el bundle de fábrica, aún sin OTA aplicado.
+      return v && v !== 'builtin' ? v : APP_VERSION
+    } catch {
+      return APP_VERSION
+    }
+  }
+  return APP_VERSION
+}
+
+// Fuerza la actualización desde el botón de Ajustes.
+// Devuelve { updated, message }. Cuando actualiza, la app se recarga sola, así
+// que el mensaje "al día" solo se ve cuando ya no había nada nuevo.
+export async function forceUpdate() {
+  tapHaptic()
+  if (await isNative()) {
+    try {
+      const { CapacitorUpdater } = await import('@capgo/capacitor-updater')
+      const r = await runOtaUpdate(CapacitorUpdater, { applyNow: true })
+      return r.updated
+        ? { updated: true, message: 'Actualizando…' }
+        : { updated: false, message: 'Ya estás en la última versión ✓' }
+    } catch (err) {
+      console.warn('[native] forceUpdate falló', err)
+      return { updated: false, message: 'No se pudo comprobar 😢' }
+    }
+  }
+
+  // Web / PWA: refresca el service worker, limpia caché y recarga.
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations()
+      await Promise.all(regs.map(r => r.update()))
+    }
+    if (typeof caches !== 'undefined') {
+      const keys = await caches.keys()
+      await Promise.all(keys.map(k => caches.delete(k)))
+    }
+  } catch (err) {
+    console.warn('[native] refresco web falló', err)
+  }
+  window.location.reload()
+  return { updated: true, message: 'Actualizando…' }
 }
 
 // Compara versiones tipo "0.1.2". El bundle de fábrica ("builtin") se trata

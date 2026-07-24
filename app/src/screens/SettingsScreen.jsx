@@ -7,6 +7,7 @@ import { pushConfigured, requestPushPermission, getPushStatus } from '../lib/not
 import { nextAssignments } from '../lib/schedule.js'
 import { todayKey, addDays, weekdayOf, fmtDayMonth, fmtTime } from '../lib/dates.js'
 import { requestSync } from '../hooks/useSync.js'
+import { forceUpdate, currentVersion } from '../lib/native.js'
 import Avatar from '../components/Avatar.jsx'
 import { SyncDot } from '../components/AppShell.jsx'
 
@@ -200,6 +201,45 @@ function PushRow() {
   )
 }
 
+// Actualización: en la app nativa fuerza el chequeo OTA (GitHub Releases) y
+// aplica el nuevo bundle al momento; en web refresca el service worker, limpia
+// caché y recarga para traer el último deploy. Si actualiza, la app se recarga
+// sola, así que el mensaje solo se ve cuando ya estabas al día.
+function UpdateRow() {
+  const [version, setVersion] = useState('')
+  const [checking, setChecking] = useState(false)
+  const [msg, setMsg] = useState('')
+
+  React.useEffect(() => { currentVersion().then(setVersion) }, [])
+
+  async function onCheck() {
+    setChecking(true)
+    setMsg('')
+    try {
+      const r = await forceUpdate()
+      setMsg(r.message ?? '')
+    } catch {
+      setMsg('No se pudo comprobar 😢')
+    }
+    setChecking(false)
+  }
+
+  return (
+    <div className="row">
+      <span className="grow sub">
+        Versión {version || '—'}{msg ? ` · ${msg}` : ''}
+      </span>
+      <span
+        className="act"
+        style={{ cursor: checking ? 'default' : 'pointer', opacity: checking ? 0.6 : 1 }}
+        onClick={checking ? undefined : onCheck}
+      >
+        {checking ? 'Buscando…' : 'Buscar actualización'}
+      </span>
+    </div>
+  )
+}
+
 export default function SettingsScreen() {
   const { doc, lastSyncAt, syncStatus } = useStore()
   const { member: me } = useMember()
@@ -293,6 +333,12 @@ export default function SettingsScreen() {
             Reiniciar
           </span>
         </div>
+      </section>
+
+      <section className="card">
+        <h2>Actualizaciones</h2>
+        <UpdateRow />
+        <div className="row"><span className="sub grow">Trae la última versión de la app sin esperas.</span></div>
       </section>
     </>
   )
