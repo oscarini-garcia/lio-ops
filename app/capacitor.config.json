@@ -3,8 +3,7 @@
   "appName": "Las Mañanas de Lio",
   "webDir": "dist",
   "ios": {
-    "contentInset": "always",
-    "backgroundColor": "#f1f0ea"
+    "contentInset": "never"
   },
   "plugins": {
     "CapacitorUpdater": {
