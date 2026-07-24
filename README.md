@@ -24,6 +24,9 @@ registra: Lio perdona, pero apunta.
   favorito/a de Lio y la deuda matutina (quién debe mañanas a quién).
 - **Avisos**: globo en el icono (iOS 16.4+) para peticiones pendientes; push
   con OneSignal en la v2.
+- **App iOS nativa (opcional)**: la misma web empaquetada con Capacitor y con
+  actualizaciones Over-The-Air (los cambios de web llegan solos, sin pasar por
+  Apple). Ver [docs/iOS.md](docs/iOS.md).
 
 ## Arrancar
 

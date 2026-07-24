@@ -1,0 +1,90 @@
+name: OTA release
+
+# Publica una actualización Over-The-Air cada vez que sube la versión en
+# app/package.json. La app iOS (Capacitor + @capgo/capacitor-updater) lee el
+# release marcado como «latest», descarga el bundle y lo aplica en el próximo
+# arranque. Los cambios solo de web/JS NO pasan por Apple.
+#
+# Flujo diario:
+#   1. subes "version" en app/package.json (p.ej. 0.1.0 -> 0.1.1)
+#   2. merge a main
+#   3. este workflow compila, empaqueta y publica el release automáticamente
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ota.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ota:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Leer versión
+        id: ver
+        run: echo "version=$(node -p "require('./app/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: ¿Ya existe el release?
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.ver.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release v${{ steps.ver.outputs.version }} ya existe — nada que publicar."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build nativo (base '/', sin service worker)
+        if: steps.check.outputs.exists == 'false'
+        working-directory: app
+        env:
+          VITE_JSONBIN_ID: ${{ vars.VITE_JSONBIN_ID }}
+          VITE_JSONBIN_KEY: ${{ vars.VITE_JSONBIN_KEY }}
+          VITE_ONESIGNAL_APP_ID: ${{ vars.VITE_ONESIGNAL_APP_ID }}
+        run: |
+          npm install
+          npm run build:native
+
+      - name: Empaquetar bundle y manifiesto
+        if: steps.check.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          set -euo pipefail
+          # zip con index.html en la raíz (lo que espera el updater)
+          (cd app/dist && zip -qr "$GITHUB_WORKSPACE/bundle.zip" .)
+          CHECKSUM=$(sha256sum bundle.zip | cut -d' ' -f1)
+          URL="https://github.com/${{ github.repository }}/releases/download/v${VERSION}/bundle.zip"
+          cat > latest.json <<EOF
+          {
+            "version": "${VERSION}",
+            "url": "${URL}",
+            "checksum": "${CHECKSUM}"
+          }
+          EOF
+          echo "latest.json:"; cat latest.json
+
+      - name: Publicar release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          gh release create "v${VERSION}" \
+            bundle.zip latest.json \
+            --title "v${VERSION}" \
+            --notes "Actualización OTA v${VERSION}. Se aplica sola en el próximo arranque de la app." \
+            --latest
