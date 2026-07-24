@@ -70,7 +70,11 @@ async function runOtaUpdate(CapacitorUpdater, { applyNow }) {
   if (!manifest?.version || !manifest?.url) return { updated: false }
 
   const current = await CapacitorUpdater.current()
-  if (!isNewer(manifest.version, current?.bundle?.version)) {
+  // El binario de fábrica ('builtin') reporta la versión NATIVA del bundle
+  // (por defecto "1.0"), que en semver es mayor que nuestro esquema web. Sin
+  // este caso especial, un OTA "0.x" jamás se consideraría más nuevo y la app
+  // quedaría clavada en el builtin. El builtin siempre puede superarse.
+  if (!isBuiltinBundle(current?.bundle) && !isNewer(manifest.version, current?.bundle?.version)) {
     return { updated: false }
   }
 
@@ -96,9 +100,10 @@ export async function currentVersion() {
     try {
       const { CapacitorUpdater } = await import('@capgo/capacitor-updater')
       const cur = await CapacitorUpdater.current()
-      const v = cur?.bundle?.version
-      // 'builtin' = el bundle de fábrica, aún sin OTA aplicado.
-      return v && v !== 'builtin' ? v : APP_VERSION
+      // El bundle de fábrica reporta la versión nativa del binario (p.ej.
+      // "1.0"), que no refleja la versión web. Mostramos APP_VERSION hasta que
+      // se aplique un OTA de verdad.
+      return isBuiltinBundle(cur?.bundle) ? APP_VERSION : (cur.bundle.version || APP_VERSION)
     } catch {
       return APP_VERSION
     }
@@ -139,6 +144,14 @@ export async function forceUpdate() {
   }
   window.location.reload()
   return { updated: true, message: 'Actualizando…' }
+}
+
+// ¿Es el bundle de fábrica (aún sin OTA aplicado)? Capgo lo identifica con
+// id 'builtin'; según la versión del plugin, su `version` puede ser 'builtin'
+// o la versión nativa del binario (p.ej. "1.0"). Cubrimos ambos.
+function isBuiltinBundle(bundle) {
+  if (!bundle) return true
+  return bundle.id === 'builtin' || bundle.version === 'builtin'
 }
 
 // Compara versiones tipo "0.1.2". El bundle de fábrica ("builtin") se trata
