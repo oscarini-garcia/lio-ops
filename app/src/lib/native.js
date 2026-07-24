@@ -57,9 +57,16 @@ export async function initNative() {
 // applyNow=false => se aplica en el próximo arranque (`next`).
 // applyNow=true  => se aplica ya, recargando el WebView (`set`).
 async function runOtaUpdate(CapacitorUpdater, { applyNow }) {
-  const res = await fetch(OTA_MANIFEST_URL, { cache: 'no-store' })
-  if (!res.ok) return { updated: false } // aún no hay releases publicados
-  const manifest = await res.json() // { version, url, checksum? }
+  // Se lee el manifiesto con CapacitorHttp (petición HTTP nativa) en vez de
+  // fetch: el WebView vive en el origen capacitor://localhost y un fetch a
+  // github.com se bloquea por CORS. CapacitorHttp lo evita y sigue el redirect.
+  const { CapacitorHttp } = await import('@capacitor/core')
+  const res = await CapacitorHttp.get({
+    url: OTA_MANIFEST_URL,
+    headers: { 'Cache-Control': 'no-cache' }
+  })
+  if (res.status < 200 || res.status >= 300) return { updated: false } // aún no hay releases
+  const manifest = typeof res.data === 'string' ? JSON.parse(res.data) : res.data
   if (!manifest?.version || !manifest?.url) return { updated: false }
 
   const current = await CapacitorUpdater.current()
