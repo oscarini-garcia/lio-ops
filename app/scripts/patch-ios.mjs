@@ -1,16 +1,17 @@
-// Ajustes del proyecto iOS que Capacitor no expone por configuración.
-// Se ejecuta tras `cap sync ios` (ver script "ios:sync" en package.json).
+// Ajustes del proyecto iOS tras `cap sync ios` (ver script "ios:sync").
 //
-// Qué hace, de forma idempotente (se puede correr mil veces y se auto-repara):
-//   1. Crea MainViewController.swift, una subclase del controlador de
-//      Capacitor que desactiva el "rebote" (bounce) del scroll del WKWebView.
-//   2. Reescribe Main.storyboard ENTERO desde una plantilla mínima válida que
-//      ya apunta a MainViewController. Se reescribe completo (en vez de
-//      parchear con regex) para que nunca pueda quedar XML malformado.
+// Deja el storyboard en un estado válido y determinista: usa el controlador
+// ESTÁNDAR de Capacitor (CAPBridgeViewController), que siempre está compilado
+// en el framework. No usamos una subclase propia porque un .swift suelto no se
+// añade automáticamente al target de Xcode, y el storyboard fallaría en
+// ejecución con "Unknown class ... in Interface Builder file" (pantalla negra).
 //
-// Si todavía no existe la carpeta ios/ (aún no has corrido `npx cap add ios`
-// en un Mac), no falla: avisa y sale con código 0.
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+// El "rebote" del scroll queda con el comportamiento por defecto; es cosmético
+// y se puede desactivar más adelante como mejora opcional (ver docs/iOS.md).
+//
+// Si todavía no existe la carpeta ios/ (aún no has corrido `npx cap add ios`),
+// no falla: avisa y sale con código 0. Es idempotente y auto-reparable.
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -24,30 +25,16 @@ if (!existsSync(iosAppDir)) {
   process.exit(0)
 }
 
-// 1. MainViewController.swift ----------------------------------------------
-const controllerPath = join(iosAppDir, 'MainViewController.swift')
-const controllerSrc = `import UIKit
-import Capacitor
-
-// Subclase del controlador de Capacitor. Desactiva el rebote del scroll para
-// que la app no se sienta como una página web dentro de Safari.
-// Generado/actualizado por scripts/patch-ios.mjs — no editar a mano.
-class MainViewController: CAPBridgeViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        webView?.scrollView.bounces = false
-        webView?.scrollView.alwaysBounceVertical = false
-        webView?.scrollView.alwaysBounceHorizontal = false
-    }
+// Borra un MainViewController.swift huérfano de versiones anteriores del script
+// (existía en disco pero no estaba en el target => rompía el arranque).
+const staleController = join(iosAppDir, 'MainViewController.swift')
+if (existsSync(staleController)) {
+  rmSync(staleController)
+  console.log('[patch-ios] MainViewController.swift huérfano eliminado.')
 }
-`
-writeFileSync(controllerPath, controllerSrc)
-console.log('[patch-ios] MainViewController.swift escrito.')
 
-// 2. Main.storyboard (reescrito entero, apuntando a MainViewController) ------
-// Storyboard mínimo: solo aloja el bridge view controller que carga el WebView.
-// customModule="App" + customModuleProvider="target" => la clase vive en el
-// target de la app (donde está MainViewController.swift).
+// Storyboard mínimo con el controlador estándar de Capacitor.
+// customModule="Capacitor" (clase del framework, no del target de la app).
 const storyboardDir = join(iosAppDir, 'Base.lproj')
 const storyboardPath = join(storyboardDir, 'Main.storyboard')
 const storyboardSrc = `<?xml version="1.0" encoding="UTF-8"?>
@@ -60,10 +47,10 @@ const storyboardSrc = `<?xml version="1.0" encoding="UTF-8"?>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Main View Controller-->
+        <!--Bridge View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="App" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="CAPBridgeViewController" customModule="Capacitor" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -80,6 +67,6 @@ const storyboardSrc = `<?xml version="1.0" encoding="UTF-8"?>
 `
 if (!existsSync(storyboardDir)) mkdirSync(storyboardDir, { recursive: true })
 writeFileSync(storyboardPath, storyboardSrc)
-console.log('[patch-ios] Main.storyboard reescrito (apunta a MainViewController).')
+console.log('[patch-ios] Main.storyboard restaurado (CAPBridgeViewController estándar).')
 
 console.log('[patch-ios] Listo.')

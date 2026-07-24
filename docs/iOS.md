@@ -70,7 +70,7 @@ permisos, el icono o el nombre de la app.
 | `app/capacitor.config.json` | appId, nombre, `webDir`, config del updater |
 | `app/vite.config.js` | `base` y PWA condicionales (`CAP_BUILD=1` = nativo) |
 | `app/src/lib/native.js` | puente: chequeo OTA al arrancar + hápticos |
-| `app/scripts/patch-ios.mjs` | desactiva el rebote del scroll (tras `cap sync`) |
+| `app/scripts/patch-ios.mjs` | deja el storyboard válido y determinista (tras `cap sync`) |
 | `.github/workflows/ota.yml` | empaqueta y publica el release OTA |
 
 ## Notas
