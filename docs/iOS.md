@@ -71,7 +71,20 @@ permisos, el icono o el nombre de la app.
 | `app/vite.config.js` | `base` y PWA condicionales (`CAP_BUILD=1` = nativo) |
 | `app/src/lib/native.js` | puente: chequeo OTA al arrancar + hápticos |
 | `app/scripts/patch-ios.mjs` | deja el storyboard válido y determinista (tras `cap sync`) |
+| `app/assets/` | icono y splash de origen (los genera `@capacitor/assets`) |
 | `.github/workflows/ota.yml` | empaqueta y publica el release OTA |
+
+## Iconos y splash nativos
+
+El icono (la huella sobre marigold) y las pantallas de arranque se generan con
+`@capacitor/assets` a partir de los PNG de `app/assets/`:
+
+- `icon-only.png` (1024) — icono completo
+- `icon-foreground.png` / `icon-background.png` (1024) — versión adaptativa
+- `splash.png` / `splash-dark.png` (2732) — arranque claro y oscuro
+
+`npm run ios:sync` ya ejecuta la generación al final, así que no hay que hacer
+nada extra. Para cambiar el icono, sustituye esos PNG y vuelve a sincronizar.
 
 ## Notas
 
