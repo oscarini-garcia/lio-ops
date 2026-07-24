@@ -162,7 +162,7 @@ function buildInitialState() {
     // estado de UI, nunca se persiste
     syncStatus: 'pending',
     lastSyncAt: null,
-    activeScreen: 'today',
+    activeScreen: 'hilo',
     daySheet: null,
     profileModalOpen: false,
     taunt: null,

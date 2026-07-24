@@ -6,8 +6,7 @@ import ProfileModal from './components/ProfileModal.jsx'
 import DaySheet from './components/DaySheet.jsx'
 import TauntToast from './components/TauntToast.jsx'
 
-const TodayScreen = lazy(() => import('./screens/TodayScreen.jsx'))
-const WeekScreen = lazy(() => import('./screens/WeekScreen.jsx'))
+const HiloScreen = lazy(() => import('./screens/HiloScreen.jsx'))
 const RequestsScreen = lazy(() => import('./screens/RequestsScreen.jsx'))
 const StatsScreen = lazy(() => import('./screens/StatsScreen.jsx'))
 const SettingsScreen = lazy(() => import('./screens/SettingsScreen.jsx'))
@@ -15,13 +14,12 @@ const SettingsScreen = lazy(() => import('./screens/SettingsScreen.jsx'))
 function ScreenRouter() {
   const { activeScreen } = useStore()
   const screens = {
-    today: <TodayScreen />,
-    week: <WeekScreen />,
-    requests: <RequestsScreen />,
-    stats: <StatsScreen />,
-    settings: <SettingsScreen />,
+    hilo: <HiloScreen />,
+    bandeja: <RequestsScreen />,
+    datos: <StatsScreen />,
+    familia: <SettingsScreen />,
   }
-  return screens[activeScreen] ?? <TodayScreen />
+  return screens[activeScreen] ?? <HiloScreen />
 }
 
 export default function App() {

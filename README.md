@@ -44,7 +44,7 @@ npm test                               # tests (vitest)
 ```
 app/src/lib/        horario, peticiones, stats, merge, sync (lógica pura)
 app/src/hooks/      store (reducer), identidad por enlace, ciclo de sync
-app/src/screens/    Hoy · Semana · Peticiones · Datos · Ajustes
+app/src/screens/    Hilo (cronología) · Bandeja · Datos · Familia
 app/src/components/ mascota, avatares, hoja de acciones por día, shell
 mockups/            maquetas HTML aprobadas (fase de diseño)
 ```
