@@ -1,15 +1,16 @@
 // Ajustes del proyecto iOS que Capacitor no expone por configuración.
 // Se ejecuta tras `cap sync ios` (ver script "ios:sync" en package.json).
 //
-// Qué hace, de forma idempotente (se puede correr mil veces):
+// Qué hace, de forma idempotente (se puede correr mil veces y se auto-repara):
 //   1. Crea MainViewController.swift, una subclase del controlador de
-//      Capacitor que desactiva el "rebote" (bounce) del scroll del WKWebView,
-//      para que la app se sienta nativa y no como una página web.
-//   2. Apunta el Main.storyboard a esa clase en vez de a CAPBridgeViewController.
+//      Capacitor que desactiva el "rebote" (bounce) del scroll del WKWebView.
+//   2. Reescribe Main.storyboard ENTERO desde una plantilla mínima válida que
+//      ya apunta a MainViewController. Se reescribe completo (en vez de
+//      parchear con regex) para que nunca pueda quedar XML malformado.
 //
 // Si todavía no existe la carpeta ios/ (aún no has corrido `npx cap add ios`
 // en un Mac), no falla: avisa y sale con código 0.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -43,26 +44,42 @@ class MainViewController: CAPBridgeViewController {
 writeFileSync(controllerPath, controllerSrc)
 console.log('[patch-ios] MainViewController.swift escrito.')
 
-// 2. Main.storyboard -> usar MainViewController -----------------------------
-const storyboardPath = join(iosAppDir, 'Base.lproj', 'Main.storyboard')
-if (existsSync(storyboardPath)) {
-  let storyboard = readFileSync(storyboardPath, 'utf8')
-  if (storyboard.includes('customClass="MainViewController"')) {
-    console.log('[patch-ios] Main.storyboard ya apunta a MainViewController.')
-  } else if (storyboard.includes('customClass="CAPBridgeViewController"')) {
-    storyboard = storyboard.replace(
-      /customClass="CAPBridgeViewController"[^>]*/,
-      'customClass="MainViewController" customModule="App" customModuleProvider="target"'
-    )
-    writeFileSync(storyboardPath, storyboard)
-    console.log('[patch-ios] Main.storyboard actualizado a MainViewController.')
-  } else {
-    console.warn(
-      '[patch-ios] No se encontró la clase del view controller en Main.storyboard; revísalo a mano si el bounce sigue activo.'
-    )
-  }
-} else {
-  console.warn('[patch-ios] No se encontró Main.storyboard; ¿estructura de proyecto distinta?')
-}
+// 2. Main.storyboard (reescrito entero, apuntando a MainViewController) ------
+// Storyboard mínimo: solo aloja el bridge view controller que carga el WebView.
+// customModule="App" + customModuleProvider="target" => la clase vive en el
+// target de la app (donde está MainViewController.swift).
+const storyboardDir = join(iosAppDir, 'Base.lproj')
+const storyboardPath = join(storyboardDir, 'Main.storyboard')
+const storyboardSrc = `<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Main View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="App" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="132"/>
+        </scene>
+    </scenes>
+</document>
+`
+if (!existsSync(storyboardDir)) mkdirSync(storyboardDir, { recursive: true })
+writeFileSync(storyboardPath, storyboardSrc)
+console.log('[patch-ios] Main.storyboard reescrito (apunta a MainViewController).')
 
 console.log('[patch-ios] Listo.')
