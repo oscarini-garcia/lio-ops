@@ -57,8 +57,18 @@
 
 * { box-sizing: border-box; }
 
+/* La página no hace scroll ni rebota: el fondo del tema cubre toda la
+   pantalla (incluidas las áreas seguras) y solo el contenido scrollea. */
+html {
+  height: 100%;
+  background: var(--mist);
+}
+
 body {
   margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: var(--mist);
   color: var(--ink);
   font-family: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN",
@@ -66,13 +76,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+#root { height: 100%; }
+
 .screen {
   max-width: 420px;
   margin: 0 auto;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   display: flex;
   flex-direction: column;
-  padding: 1rem 1rem 5.5rem;
+  /* Respeta la barra de estado / Dynamic Island arriba y el indicador de
+     inicio abajo (además del hueco para la barra de pestañas). */
+  padding:
+    calc(1rem + env(safe-area-inset-top)) 1rem
+    calc(5.5rem + env(safe-area-inset-bottom));
   gap: 0.9rem;
 }
 

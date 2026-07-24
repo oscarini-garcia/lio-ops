@@ -1,0 +1,14 @@
+{
+  "appId": "com.oscarini.lioops",
+  "appName": "Las Mañanas de Lio",
+  "webDir": "dist",
+  "ios": {
+    "contentInset": "never"
+  },
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": false,
+      "resetWhenUpdate": true
+    }
+  }
+}
