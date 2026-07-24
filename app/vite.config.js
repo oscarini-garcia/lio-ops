@@ -11,6 +11,18 @@ import { VitePWA } from 'vite-plugin-pwa'
 // Se activa con CAP_BUILD=1 (ver `npm run build:native`).
 const isNative = process.env.CAP_BUILD === '1'
 
+// En el WebView de Capacitor (esquema capacitor://localhost) el atributo
+// `crossorigin` que Vite pone en los <script type="module"> y <link> dispara
+// una comprobación CORS que bloquea la carga de JS/CSS → pantalla en negro.
+// Este plugin lo elimina, pero SOLO en el build nativo; la web queda igual.
+const stripCrossorigin = {
+  name: 'strip-crossorigin',
+  enforce: 'post',
+  transformIndexHtml(html) {
+    return html.replace(/\s+crossorigin(?:="[^"]*")?/g, '')
+  }
+}
+
 const pwa = VitePWA({
   registerType: 'autoUpdate',
   workbox: {
@@ -45,7 +57,7 @@ export default defineConfig({
   base: isNative ? '/' : '/lio-ops/',
   plugins: [
     react(),
-    ...(isNative ? [] : [pwa])
+    ...(isNative ? [stripCrossorigin] : [pwa])
   ],
   test: {
     environment: 'node'
