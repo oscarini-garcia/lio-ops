@@ -138,8 +138,14 @@
       existe es la variedad: son <strong>siete frases escritas a mano</strong> y
       no cambian nunca. Esto va de sustituir esas siete por frases nuevas cada
       día, y toda la dificultad está en un solo sitio —<strong>esta aplicación no
-      tiene servidor</strong>—, así que las opciones son sobre dónde vive la
-      clave de Anthropic y no sobre cómo se ve.
+      tiene servidor</strong>—, así que las opciones son sobre dónde corre la
+      llamada y no sobre cómo se ve.
+    </p>
+    <p>
+      La respuesta corta es que <strong>sí se puede usar la IA que ya hay</strong>,
+      y es la mejor de las cuatro. Lo que no puede es llamarla la aplicación:
+      la llama la Action, igual que el generador del plan semanal lleva
+      haciéndolo desde el principio.
     </p>
   </header>
 
@@ -217,39 +223,59 @@
     <h2>3. Las cuatro maneras</h2>
 
     <div class="opcion">
-      <h3>A · La Action escribe la tanda en el documento <span class="recomendada">recomendada</span></h3>
+      <h3>A · La Action llama al Worker de la agenda <span class="recomendada">recomendada</span></h3>
       <p>
-        Un paso más en el cron que ya existe, o un workflow diario propio.
-        Lee el documento de JSONBin —que ya lee—, compone el material, llama a
-        Anthropic con la clave en <code>secrets</code> y escribe las frases en
-        <code>doc.meta</code>. La aplicación solo las lee.
+        La clave de Anthropic no se copia a ninguna parte: se queda donde ya
+        está. Quien llama al Worker <strong>no es la aplicación</strong> —que no
+        puede, porque no tiene cuentas— <strong>sino la Action</strong>, que sí
+        sabe guardar un secreto. Y eso no hay que inventarlo: es exactamente
+        como funciona ya el generador del plan semanal.
       </p>
-      <pre>Actions (1 vez al día)          La app
-─────────────────────           ──────
-lee el bin  ─┐
-             ├─ llama a Anthropic
-escribe  ────┘   doc.meta.quips = [ … ]
-                       │
-                       └──── sync ────►  la tarjeta las va pasando
-                                          (y funciona sin cobertura)</pre>
+      <pre>Actions de lio-ops (1 vez al día)        Worker de la agenda
+──────────────────────────────           ───────────────────
+lee el bin de JSONBin
+compone el estado del perro  ──POST──►   /api/ia/lio
+  racha, a quién le toca, deuda            (Bearer TOKEN_LIO)
+                                                │
+                             ◄──frases──   Anthropic, con la clave
+escribe doc.meta.quips                     que ya vive en Cloudflare
+        │
+        └──── sync ────►  la tarjeta las va pasando (y sin cobertura)</pre>
       <div class="pros">
-        <div class="si"><span>+</span><span>Cero arquitectura nueva: `notify.mjs` ya hace exactamente esta forma —leer el bin, hacer algo, escribir—, y ya importa de <code>app/src/lib/</code>.</span></div>
-        <div class="si"><span>+</span><span>La clave no sale de Actions, que es el único sitio de este proyecto que puede guardarla.</span></div>
-        <div class="si"><span>+</span><span><code>doc.meta</code> ya existe y ya se funde por «el más reciente gana». Cabe sin tocar el merge.</span></div>
-        <div class="si"><span>+</span><span>Funciona sin cobertura: las frases llegan con el documento, como todo lo demás.</span></div>
-        <div class="si"><span>+</span><span>Una llamada al día para toda la casa. Céntimos al mes.</span></div>
-        <div class="no"><span>−</span><span>Las mismas frases para los cuatro. Aquí da igual —en esta aplicación no hay nada oculto para nadie—, pero conviene decirlo.</span></div>
-        <div class="no"><span>−</span><span>Tocar «otra» recorre la tanda; agotarla no puede pedir más hasta el cron siguiente. Con una tanda de quince eso no pasa en un día.</span></div>
+        <div class="si"><span>+</span><span><strong>Ni una clave de Anthropic más.</strong> Hoy hay una, en Cloudflare. Con esto sigue habiendo una: rotarla es un sitio y no dos.</span></div>
+        <div class="si"><span>+</span><span><strong>El precedente ya está escrito.</strong> <code>/api/registro</code> y <code>/api/viajes/refrescar</code> se autentican con un token de servicio y comparación en tiempo constante, precisamente porque quien las llama es un script y no una persona. Esto es la tercera de la misma familia.</span></div>
+        <div class="si"><span>+</span><span><strong>Se reaprovecha lo caro:</strong> la cadena de repuesto de tres modelos, el freno por minuto y la traza de intentos fallidos. Ya están escritos y probados.</span></div>
+        <div class="si"><span>+</span><span><strong>Y lo mejor: el tono se edita desde el teléfono.</strong> Sería el sexto encargo de Ajustes, junto a los otros cinco. Cambiar la voz de Lio no pediría un despliegue —que es exactamente la palanca que hizo falta para quitarle el taco a la frase de la agenda—.</span></div>
+        <div class="no"><span>−</span><span>Ata las dos aplicaciones: con el Worker caído no hay tanda nueva. Se nota poco, porque se queda la del día anterior.</span></div>
+        <div class="no"><span>−</span><span>El material entra <strong>desde fuera</strong>, y hasta hoy el Worker lo componía siempre de su propia instantánea, que es lo que impide que nadie le inyecte nada. Aquí no puede evitarse: el estado del perro vive en JSONBin y el Worker no lo conoce. Se acota mandando <strong>campos con tipo</strong> —un número de racha, unos identificadores de miembro— y nunca prosa, y queda como la segunda excepción documentada del módulo, al lado de la pista del regalo.</span></div>
+      </div>
+
+      <div class="nota pega">
+        <p><strong>Un token nuevo, no el que ya hay.</strong></p>
+        <p>
+          <code>TOKEN_SERVICIO</code> abre <code>/api/registro</code>, que
+          devuelve el registro <em>entero</em> de la familia: personas, ideas,
+          regalos y todo lo demás. Dárselo a la Action del perro para que pida
+          chistes multiplicaría por mucho lo que se pierde si ese secreto se
+          escapa. Va un <code>TOKEN_LIO</code> aparte que solo abre esta ruta, y
+          entonces lo peor que puede pasar es que alguien genere chistes de
+          caniche a nuestra costa —acotado, además, por el freno por minuto—.
+        </p>
       </div>
     </div>
 
     <div class="opcion">
-      <h3>B · Reutilizar el Worker de la agenda</h3>
+      <h3>B · La Action llama a Anthropic directamente</h3>
+      <p>
+        Lo mismo, pero sin pasar por la agenda: la Action habla con Anthropic
+        con una clave propia guardada en los secretos de este repositorio.
+      </p>
       <div class="pros">
-        <div class="si"><span>+</span><span>La clave, la cadena de modelos y el freno por minuto ya están escritos y en producción.</span></div>
-        <div class="no"><span>−</span><span><code>/api/ia/chispa</code> exige sesión de Apple. Esta aplicación <strong>no tiene cuentas</strong>: la identidad es <code>?member=oscar</code> en la URL.</span></div>
-        <div class="no"><span>−</span><span>Abrirle una puerta con un secreto compartido devuelve el problema al principio: ese secreto acabaría en el bundle público. Meterlo por Actions es la opción A con un salto de más.</span></div>
-        <div class="no"><span>−</span><span>Ata dos aplicaciones que hoy no se conocen: un despliegue de la agenda podría dejar mudo al perro.</span></div>
+        <div class="si"><span>+</span><span>Las dos aplicaciones siguen sin conocerse. Nada de lo que pase en la agenda puede dejar mudo al perro.</span></div>
+        <div class="si"><span>+</span><span>El material no cruza ninguna frontera: se compone y se usa en el mismo sitio.</span></div>
+        <div class="no"><span>−</span><span><strong>Una segunda copia de la credencial de pago</strong>, en un segundo sitio. Rotarla pasa a ser dos tareas, y la que se olvida es siempre la segunda.</span></div>
+        <div class="no"><span>−</span><span>Hay que reescribir aquí la cadena de repuesto y el manejo de errores, o quedarse sin ellos.</span></div>
+        <div class="no"><span>−</span><span>El tono se queda en el código: cambiar la voz de Lio pide un commit y un despliegue.</span></div>
       </div>
     </div>
 
@@ -331,10 +357,11 @@ deuda      Amaya le debe 2 mañanas a Mariona
   <section class="parte">
     <h2>5. Qué hay que decidir</h2>
     <div class="pros">
-      <div class="si"><span>1</span><span><strong>Dónde corre la llamada:</strong> A, B, C o D. Recomiendo <strong>A</strong>. La C es lo que hay que hacer el día que esta aplicación necesite servidor por otra cosa; hoy no lo necesita.</span></div>
-      <div class="si"><span>2</span><span><strong>Si entra también el aviso del paseo</strong> —los <code>TAUNTS</code>— o solo la tarjeta de Lio. Son dos formatos del mismo encargo y cuestan lo mismo, así que yo metería los dos.</span></div>
-      <div class="si"><span>3</span><span><strong>El tono del muestrario</strong> del apartado 4: si Lio es así de digno, o más quejica, o más blando.</span></div>
-      <div class="si"><span>4</span><span><strong>Qué pasa el día que la Action falle o no haya clave.</strong> Lo natural: se queda la tanda anterior, y si nunca ha habido ninguna, las siete de siempre. La tarjeta no puede desaparecer, porque es el encabezado de la pantalla.</span></div>
+      <div class="si"><span>1</span><span><strong>Dónde corre la llamada:</strong> A, B, C o D. Recomiendo <strong>A</strong> —la Action contra el Worker que ya existe—, y con ella la decisión de que el encargo viva en Ajustes como el sexto. La C es lo que hay que hacer el día que esta aplicación necesite servidor por otra cosa; hoy no lo necesita.</span></div>
+      <div class="si"><span>2</span><span><strong>Si el token va aparte.</strong> Recomiendo que sí: un <code>TOKEN_LIO</code> propio, para que un escape aquí no abra <code>/api/registro</code>, que devuelve la familia entera.</span></div>
+      <div class="si"><span>3</span><span><strong>Si entra también el aviso del paseo</strong> —los <code>TAUNTS</code>— o solo la tarjeta de Lio. Son dos formatos del mismo encargo y cuestan lo mismo, así que yo metería los dos.</span></div>
+      <div class="si"><span>4</span><span><strong>El tono del muestrario</strong> del apartado 4: si Lio es así de digno, o más quejica, o más blando.</span></div>
+      <div class="si"><span>5</span><span><strong>Qué pasa el día que la Action falle o no haya clave.</strong> Lo natural: se queda la tanda anterior, y si nunca ha habido ninguna, las siete de siempre. La tarjeta no puede desaparecer, porque es el encabezado de la pantalla.</span></div>
     </div>
   </section>
 
