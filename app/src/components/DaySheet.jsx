@@ -114,7 +114,7 @@ export default function DaySheet() {
         {noteInput}
         {defaultConfirmer ? (
           <button className="opt" onClick={() => submitRetro(defaultConfirmer)}>
-            <span className="ico">🐩</span>
+            <span className="ico">🐾</span>
             <span>
               <span className="t">Reclamar este paseo</span>
               <span className="s">Confirma {memberName(doc, defaultConfirmer)} (era su mañana)</span>

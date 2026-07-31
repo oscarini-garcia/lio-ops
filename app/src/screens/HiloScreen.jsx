@@ -133,7 +133,7 @@ export default function HiloScreen() {
         <section className="card">
           {past.map(d => <DayRow key={d} date={d} doc={doc} onTap={onTap} />)}
           <p className="sub" style={{ color: 'var(--ink-soft)', textAlign: 'center', marginTop: '0.7rem' }}>
-            Toca un día para reclamar «esto lo saqué yo» — lo confirma quien tenía el turno 🐩
+            Toca un día para reclamar «esto lo saqué yo» — lo confirma quien tenía el turno 🐾
           </p>
         </section>
       )}

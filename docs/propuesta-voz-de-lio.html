@@ -74,10 +74,7 @@
     box-shadow: var(--shadow); padding: .85rem 1rem;
     display: flex; align-items: center; gap: .75rem;
   }
-  .qlogo {
-    flex: none; width: 44px; height: 44px; border-radius: 50%;
-    background: var(--ink); display: grid; place-items: center; font-size: 22px;
-  }
+  .qlogo { flex: none; width: 44px; height: 44px; border-radius: 12px; display: block; }
   .qt { display: block; font-weight: 700; font-size: .92rem; line-height: 1.35; }
   .qm { display: block; font-size: .72rem; color: var(--ink-soft); margin-top: .3rem; }
 
@@ -160,7 +157,7 @@
       <div class="caso">
         <p class="rotulo">Hoy · <code>HiloScreen.jsx</code></p>
         <div class="quip-card">
-          <div class="qlogo">🐩</div>
+          <svg class="qlogo" viewBox="0 0 120 120" aria-label="Lio"><rect width="120" height="120" rx="26" fill="#e89b3c"/><g fill="#232020"><circle cx="41" cy="46" r="10"/><circle cx="60" cy="39" r="10"/><circle cx="79" cy="46" r="10"/><circle cx="30" cy="64" r="8"/><circle cx="90" cy="64" r="8"/><ellipse cx="60" cy="80" rx="24" ry="19"/></g></svg>
           <div>
             <span class="qt">Llevo despierto desde las 6:12. Solo lo menciono.</span>
             <small class="qm">— Lio · 🔥 12 días de racha · toca para otra</small>
@@ -170,7 +167,7 @@
       <div class="caso">
         <p class="rotulo">Al marcar el paseo · <code>TauntToast.jsx</code></p>
         <div style="display:flex; align-items:center; min-height:72px;">
-          <div class="toast">¡Lio aprueba este paseo! 🐾</div>
+          <div class="toast">Anotado. Subes en mi estima, discretamente. 🐾</div>
         </div>
       </div>
     </div>
@@ -187,6 +184,21 @@
       al marcar el paseo. Van juntas en este documento: mismo problema, misma
       solución y, si se hace, mismo encargo con dos formatos.
     </p>
+
+    <div class="nota">
+      <p><strong>La marca de Lio es la huella, no el emoji de caniche.</strong></p>
+      <p>
+        El favicon ya es una huella negra sobre naranja y la mascota está
+        dibujada a mano en negro (<code>#35312c</code>), que es el color del
+        perro. Pero por la interfaz hay <strong>seis 🐩 sueltos</strong> —en la
+        hoja del día, en Datos, en el hilo, en la bandeja, en la pantalla de
+        carga y en uno de los avisos—, y ese emoji lo pinta blanco o crema
+        cualquier fuente del sistema. Contradice a la vez al favicon y a la
+        mascota, y encima el 🐾 ya está usado en el botón principal
+        —«🐾 ¡Paseado!»— y es la marca que la agenda usa para Lio. Va aparte de
+        esta propuesta, en un cambio de una línea por sitio.
+      </p>
+    </div>
   </section>
 
   <section class="parte">

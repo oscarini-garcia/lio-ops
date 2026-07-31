@@ -72,7 +72,7 @@ function IncomingCard({ request, doc }) {
       )}
       <div className="btns">
         <button className="btn yes" onClick={() => act('ACCEPT_REQUEST')}>
-          {request.type === 'retro' ? 'Confirmar — es verdad 🐩'
+          {request.type === 'retro' ? 'Confirmar — es verdad 🐾'
             : request.dates.length > 1 ? `Aceptar las ${effective.length}` : 'Aceptar 🐾'}
         </button>
         <button className="btn no" onClick={() => act('DECLINE_REQUEST')}>
@@ -114,7 +114,7 @@ export default function RequestsScreen() {
 
       <section className="card">
         <h2>Necesita tu respuesta · {forMe.length}</h2>
-        {forMe.length === 0 && <p className="sub" style={{ color: 'var(--ink-soft)' }}>Nada pendiente. Lio está orgulloso 🐩</p>}
+        {forMe.length === 0 && <p className="sub" style={{ color: 'var(--ink-soft)' }}>Nada pendiente. Lio está orgulloso 🐾</p>}
         {forMe.map(r => <IncomingCard key={r.id} request={r} doc={doc} />)}
       </section>
 
