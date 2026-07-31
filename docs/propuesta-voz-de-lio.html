@@ -1,0 +1,341 @@
+<meta charset="utf-8">
+<title>La voz de Lio, escrita por un modelo — opciones</title>
+
+<style>
+  /* La paleta es la de la propia aplicación (app/src/theme.css), para que las
+     maquetas se parezcan a lo que se va a ver y no a un documento. */
+  :root {
+    --mist: #f1f0ea; --card: #ffffff; --ink: #232020; --ink-soft: #7d776e;
+    --line: #e2dfd6; --sunrise: #e89b3c; --collar: #e4737f; --park: #4f9d69;
+    --miss: #b0655e; --chip: #eceae2;
+    --shadow: 0 6px 24px rgba(35, 32, 32, .08);
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --mist: #1b1a18; --card: #262421; --ink: #efeae1; --ink-soft: #a39c90;
+      --line: #38352f; --sunrise: #f0ac54; --collar: #e88793; --park: #6cb884;
+      --miss: #d08078; --chip: #32302b;
+      --shadow: 0 6px 24px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="light"] {
+    --mist: #f1f0ea; --card: #fff; --ink: #232020; --ink-soft: #7d776e;
+    --line: #e2dfd6; --sunrise: #e89b3c; --collar: #e4737f; --park: #4f9d69;
+    --miss: #b0655e; --chip: #eceae2;
+  }
+  :root[data-theme="dark"] {
+    --mist: #1b1a18; --card: #262421; --ink: #efeae1; --ink-soft: #a39c90;
+    --line: #38352f; --sunrise: #f0ac54; --collar: #e88793; --park: #6cb884;
+    --miss: #d08078; --chip: #32302b;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    background: var(--mist); color: var(--ink); font-family: var(--sans);
+    font-size: 16px; line-height: 1.6; margin: 0; padding: 28px 20px 90px;
+  }
+  .doc { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+
+  h1, h2, h3 { margin: 0; letter-spacing: -.01em; text-wrap: balance; font-weight: 800; }
+  h1 { font-size: 29px; line-height: 1.22; }
+  h2 { font-size: 21px; }
+  h3 { font-size: 17px; }
+  p { margin: 0; max-width: 68ch; }
+  strong { font-weight: 700; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--chip); padding: 1px 5px; border-radius: 5px; }
+
+  .rotulo { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .portada { display: flex; flex-direction: column; gap: 12px; }
+  .portada p, .parte > p { color: var(--ink-soft); }
+  .parte { border-top: 2px solid var(--ink); padding-top: 15px; display: flex; flex-direction: column; gap: 14px; }
+  .parte h3 { margin-top: 6px; }
+
+  .nota {
+    background: var(--card); border: 1px solid var(--line);
+    border-left: 3px solid var(--sunrise); border-radius: 16px;
+    padding: 15px 17px; display: flex; flex-direction: column; gap: 10px;
+    box-shadow: var(--shadow);
+  }
+  .nota p { color: var(--ink-soft); }
+  .nota strong { color: var(--ink); }
+  .nota.pega { border-left-color: var(--miss); }
+  .nota.bien { border-left-color: var(--park); }
+
+  /* ------------------------------------------------ La tarjeta de Lio -- */
+
+  .tira { display: flex; flex-wrap: wrap; gap: 16px; }
+  .caso { flex: 1 1 260px; min-width: 250px; display: flex; flex-direction: column; gap: 8px; }
+
+  .quip-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow); padding: .85rem 1rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .qlogo {
+    flex: none; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--ink); display: grid; place-items: center; font-size: 22px;
+  }
+  .qt { display: block; font-weight: 700; font-size: .92rem; line-height: 1.35; }
+  .qm { display: block; font-size: .72rem; color: var(--ink-soft); margin-top: .3rem; }
+
+  .toast {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow); padding: .7rem 1.2rem; font-weight: 700;
+    font-size: .92rem; text-align: center;
+  }
+
+  /* -------------------------------------------------------- Muestrario -- */
+
+  .muestras { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+  .muestra {
+    display: grid; grid-template-columns: 152px 1fr; gap: 16px;
+    padding: 11px 0; border-bottom: 1px solid var(--line); align-items: baseline;
+  }
+  .muestra span {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--ink-soft);
+  }
+  .muestra p { font-weight: 600; }
+  @media (max-width: 560px) { .muestra { grid-template-columns: 1fr; gap: 3px; } }
+
+  .tabla-envoltorio { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th, td { text-align: left; padding: 8px 14px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); font-weight: 400; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.gana td { color: var(--ink); }
+  tr.gana td:first-child { font-weight: 700; }
+
+  pre {
+    margin: 0; overflow-x: auto; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 13px 15px; font-family: var(--mono); font-size: 12.5px; line-height: 1.6;
+  }
+  pre b { color: var(--sunrise); font-weight: 700; }
+
+  .recomendada {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+    color: #fff; background: var(--park); padding: 3px 9px; border-radius: 999px;
+    vertical-align: middle; margin-left: 8px; font-weight: 700;
+  }
+  .opcion { display: flex; flex-direction: column; gap: 10px; }
+  .pros { display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; }
+  .si, .no { display: flex; gap: 9px; align-items: flex-start; }
+  .si span:first-child { color: var(--park); font-weight: 800; }
+  .no span:first-child { color: var(--miss); font-weight: 800; }
+  .si span:last-child, .no span:last-child { color: var(--ink-soft); }
+</style>
+
+<div class="doc">
+
+  <header class="portada">
+    <p class="rotulo">Las Mañanas de Lio · propuesta</p>
+    <h1>Que la voz de Lio la escriba un modelo: dónde corre la llamada, si no hay servidor</h1>
+    <p>
+      La tarjeta ya existe y ya se toca para pasar a la siguiente. Lo que no
+      existe es la variedad: son <strong>siete frases escritas a mano</strong> y
+      no cambian nunca. Esto va de sustituir esas siete por frases nuevas cada
+      día, y toda la dificultad está en un solo sitio —<strong>esta aplicación no
+      tiene servidor</strong>—, así que las opciones son sobre dónde vive la
+      clave de Anthropic y no sobre cómo se ve.
+    </p>
+  </header>
+
+  <section class="parte">
+    <h2>1. Lo que ya está hecho</h2>
+    <p>
+      Es más de lo que parece. El sitio, el gesto y la voz están decididos desde
+      el diseño, y ninguna de las opciones de abajo los toca.
+    </p>
+
+    <div class="tira">
+      <div class="caso">
+        <p class="rotulo">Hoy · <code>HiloScreen.jsx</code></p>
+        <div class="quip-card">
+          <div class="qlogo">🐩</div>
+          <div>
+            <span class="qt">Llevo despierto desde las 6:12. Solo lo menciono.</span>
+            <small class="qm">— Lio · 🔥 12 días de racha · toca para otra</small>
+          </div>
+        </div>
+      </div>
+      <div class="caso">
+        <p class="rotulo">Al marcar el paseo · <code>TauntToast.jsx</code></p>
+        <div style="display:flex; align-items:center; min-height:72px;">
+          <div class="toast">¡Lio aprueba este paseo! 🐾</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pros">
+      <div class="si"><span>✓</span><span><strong>El sitio</strong>: la primera tarjeta del hilo, encima de todo, con la mascota al lado.</span></div>
+      <div class="si"><span>✓</span><span><strong>El gesto</strong>: se toca y sale la siguiente. Exactamente lo que se quiere.</span></div>
+      <div class="si"><span>✓</span><span><strong>La voz</strong>: Lio en primera persona, caniche toy negro con opiniones firmes. Eso es una decisión de producto ya tomada, y es lo que hay que escribirle al modelo.</span></div>
+      <div class="no"><span>✗</span><span><strong>La variedad</strong>: siete frases y un ciclo. A la semana te las sabes, y entonces la tarjeta deja de leerse.</span></div>
+    </div>
+
+    <p>
+      Y hay una segunda lista, los siete <code>TAUNTS</code> del aviso que sale
+      al marcar el paseo. Van juntas en este documento: mismo problema, misma
+      solución y, si se hace, mismo encargo con dos formatos.
+    </p>
+  </section>
+
+  <section class="parte">
+    <h2>2. El problema: aquí no hay dónde esconder la clave</h2>
+    <p>
+      En la agenda esto lo resuelve el Worker: la clave de Anthropic vive en
+      Cloudflare y ningún dispositivo la ve. Aquí no hay equivalente.
+    </p>
+
+    <div class="tabla-envoltorio">
+      <table>
+        <thead><tr><th>Pieza</th><th>Dónde corre</th><th>¿Puede guardar un secreto?</th></tr></thead>
+        <tbody>
+          <tr><td>La PWA</td><td>GitHub Pages, estática</td><td>No — el bundle es público, y el repositorio también</td></tr>
+          <tr><td>JSONBin</td><td>Servicio de terceros</td><td>No — solo guarda el documento</td></tr>
+          <tr class="gana"><td>La Action de avisos</td><td>GitHub Actions, cron cada 30 min</td><td><strong>Sí</strong> — ya usa <code>secrets.ONESIGNAL_API_KEY</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nota pega">
+      <p><strong>Y esto no es una precaución teórica.</strong></p>
+      <p>
+        La clave de JSONBin ya viaja en el bundle público, que fue una decisión
+        consciente: lo peor que puede hacer quien la encuentre es leer o estropear
+        el calendario de un perro. Una clave de Anthropic es otra cosa
+        —es una credencial de <em>pago</em>—, y una clave de pago en una página
+        pública se gasta sola. Ninguna de las opciones de abajo la pone ahí.
+      </p>
+    </div>
+  </section>
+
+  <section class="parte">
+    <h2>3. Las cuatro maneras</h2>
+
+    <div class="opcion">
+      <h3>A · La Action escribe la tanda en el documento <span class="recomendada">recomendada</span></h3>
+      <p>
+        Un paso más en el cron que ya existe, o un workflow diario propio.
+        Lee el documento de JSONBin —que ya lee—, compone el material, llama a
+        Anthropic con la clave en <code>secrets</code> y escribe las frases en
+        <code>doc.meta</code>. La aplicación solo las lee.
+      </p>
+      <pre>Actions (1 vez al día)          La app
+─────────────────────           ──────
+lee el bin  ─┐
+             ├─ llama a Anthropic
+escribe  ────┘   doc.meta.quips = [ … ]
+                       │
+                       └──── sync ────►  la tarjeta las va pasando
+                                          (y funciona sin cobertura)</pre>
+      <div class="pros">
+        <div class="si"><span>+</span><span>Cero arquitectura nueva: `notify.mjs` ya hace exactamente esta forma —leer el bin, hacer algo, escribir—, y ya importa de <code>app/src/lib/</code>.</span></div>
+        <div class="si"><span>+</span><span>La clave no sale de Actions, que es el único sitio de este proyecto que puede guardarla.</span></div>
+        <div class="si"><span>+</span><span><code>doc.meta</code> ya existe y ya se funde por «el más reciente gana». Cabe sin tocar el merge.</span></div>
+        <div class="si"><span>+</span><span>Funciona sin cobertura: las frases llegan con el documento, como todo lo demás.</span></div>
+        <div class="si"><span>+</span><span>Una llamada al día para toda la casa. Céntimos al mes.</span></div>
+        <div class="no"><span>−</span><span>Las mismas frases para los cuatro. Aquí da igual —en esta aplicación no hay nada oculto para nadie—, pero conviene decirlo.</span></div>
+        <div class="no"><span>−</span><span>Tocar «otra» recorre la tanda; agotarla no puede pedir más hasta el cron siguiente. Con una tanda de quince eso no pasa en un día.</span></div>
+      </div>
+    </div>
+
+    <div class="opcion">
+      <h3>B · Reutilizar el Worker de la agenda</h3>
+      <div class="pros">
+        <div class="si"><span>+</span><span>La clave, la cadena de modelos y el freno por minuto ya están escritos y en producción.</span></div>
+        <div class="no"><span>−</span><span><code>/api/ia/chispa</code> exige sesión de Apple. Esta aplicación <strong>no tiene cuentas</strong>: la identidad es <code>?member=oscar</code> en la URL.</span></div>
+        <div class="no"><span>−</span><span>Abrirle una puerta con un secreto compartido devuelve el problema al principio: ese secreto acabaría en el bundle público. Meterlo por Actions es la opción A con un salto de más.</span></div>
+        <div class="no"><span>−</span><span>Ata dos aplicaciones que hoy no se conocen: un despliegue de la agenda podría dejar mudo al perro.</span></div>
+      </div>
+    </div>
+
+    <div class="opcion">
+      <h3>C · Un Worker propio para lio-ops</h3>
+      <div class="pros">
+        <div class="si"><span>+</span><span>La única que da frases <strong>a demanda de verdad</strong>: se acaban las quince y pides más en el acto.</span></div>
+        <div class="si"><span>+</span><span>Deja el sitio hecho para lo siguiente que quiera servidor.</span></div>
+        <div class="no"><span>−</span><span>Un proyecto de Cloudflare más, un despliegue más, un secreto más y un dominio más, para una tarjeta que se lee tres segundos.</span></div>
+        <div class="no"><span>−</span><span>Es la opción correcta el día que esta aplicación necesite servidor por otra cosa. Hoy no lo necesita.</span></div>
+      </div>
+    </div>
+
+    <div class="opcion">
+      <h3>D · Sin IA: que las fijas crezcan y miren el día</h3>
+      <p>
+        De siete a cuarenta, y elegidas según lo que pasa: racha alta, racha
+        rota, te toca a ti, ayer nadie salió, es sábado. Todo eso ya está
+        calculado en <code>stats.js</code> y <code>schedule.js</code>.
+      </p>
+      <div class="pros">
+        <div class="si"><span>+</span><span>Cero infraestructura, cero coste, cero clave y funciona siempre.</span></div>
+        <div class="si"><span>+</span><span>La mitad de la gracia de la IA aquí no es la IA: es que la frase sepa que llevas doce días de racha. Eso se puede hacer sin modelo.</span></div>
+        <div class="no"><span>−</span><span>Se escriben a mano una vez y envejecen. Con cuarenta y una al día, el ciclo es de mes y medio.</span></div>
+        <div class="no"><span>−</span><span>Nadie va a volver a escribir cuarenta frases dentro de un año.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="parte">
+    <h2>4. Qué le llega al modelo, y cómo suena</h2>
+    <p>
+      El material sale entero del documento que la Action ya lee. Sin nada de
+      esto, las frases son de perro genérico; con esto, son de Lio.
+    </p>
+    <pre>hoy        sábado, le toca a Óscar
+ayer       nadie sacó a Lio
+racha      12 días
+récord     31 días
+este mes   Mariona 9 · Amaya 8 · Ana 4 · Óscar 4
+deuda      Amaya le debe 2 mañanas a Mariona
+<b>madrugador Mariona, 6:58 de media</b></pre>
+
+    <p>
+      Y el tono, que es lo que hay que escribirle con nombre y apellidos. La
+      lección está recién aprendida en la agenda: <strong>si no se le marca el
+      registro, tira de lo fácil</strong> —allí coló un taco para dar énfasis—.
+      Aquí el encargo tiene una ventaja que allí no hay: la voz ya está definida
+      y es un personaje. Lio habla en primera persona, es pequeño y lo sabe, le
+      parece que se le atiende poco, y nunca se enfada de verdad.
+    </p>
+
+    <div class="muestras">
+      <div class="muestra"><span>Racha alta</span><p>Doce días seguidos. No quiero decir que os hayáis acostumbrado a hacer lo correcto, pero se nota.</p></div>
+      <div class="muestra"><span>Ayer nadie salió</span><p>Ayer no salimos. He archivado el dato. No he hecho nada más, de momento.</p></div>
+      <div class="muestra"><span>Le toca a Óscar</span><p>Hoy Óscar. Le he oído el despertador tres veces. Ninguna era la buena.</p></div>
+      <div class="muestra"><span>Fin de semana</span><p>Sábado. Entiendo que durmáis. También entiendo que el parque abre igual.</p></div>
+      <div class="muestra"><span>Deuda pendiente</span><p>Alguien de esta casa debe dos mañanas. No doy nombres. Los tengo, pero no los doy.</p></div>
+      <div class="muestra"><span>Récord cerca</span><p>Nos faltan dos días para el récord. Lo digo sin presionar, con toda la presión.</p></div>
+      <div class="muestra"><span>Al marcar (toast)</span><p>Anotado. Subes en mi estima, discretamente.</p></div>
+      <div class="muestra"><span>Al marcar (toast)</span><p>Correcto. Sigues en la lista de los buenos.</p></div>
+    </div>
+
+    <div class="nota bien">
+      <p><strong>Dos reglas que no son de estilo.</strong></p>
+      <p>
+        <strong>Que no riña a nadie de verdad.</strong> Quien lee la frase es
+        quien no sacó al perro, y esta tarjeta se ve en el desayuno. El reproche
+        es de mentira y tiene que sonar a que lo es.
+      </p>
+      <p>
+        <strong>Y que no invente lo que no le han dado.</strong> Si dice que
+        Amaya llegó tarde y Amaya no salió ese día, la frase deja de tener gracia
+        y pasa a ser una acusación falsa delante de toda la casa.
+      </p>
+    </div>
+  </section>
+
+  <section class="parte">
+    <h2>5. Qué hay que decidir</h2>
+    <div class="pros">
+      <div class="si"><span>1</span><span><strong>Dónde corre la llamada:</strong> A, B, C o D. Recomiendo <strong>A</strong>. La C es lo que hay que hacer el día que esta aplicación necesite servidor por otra cosa; hoy no lo necesita.</span></div>
+      <div class="si"><span>2</span><span><strong>Si entra también el aviso del paseo</strong> —los <code>TAUNTS</code>— o solo la tarjeta de Lio. Son dos formatos del mismo encargo y cuestan lo mismo, así que yo metería los dos.</span></div>
+      <div class="si"><span>3</span><span><strong>El tono del muestrario</strong> del apartado 4: si Lio es así de digno, o más quejica, o más blando.</span></div>
+      <div class="si"><span>4</span><span><strong>Qué pasa el día que la Action falle o no haya clave.</strong> Lo natural: se queda la tanda anterior, y si nunca ha habido ninguna, las siete de siempre. La tarjeta no puede desaparecer, porque es el encabezado de la pantalla.</span></div>
+    </div>
+  </section>
+
+</div>
