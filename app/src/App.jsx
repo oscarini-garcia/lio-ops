@@ -27,7 +27,7 @@ export default function App() {
     <StoreProvider>
       <SyncBootstrap />
       <AppShell>
-        <Suspense fallback={<div style={{ textAlign: 'center', color: 'var(--ink-soft)', padding: '3rem 0' }}>Cargando… Lio ya está olisqueando 🐩</div>}>
+        <Suspense fallback={<div style={{ textAlign: 'center', color: 'var(--ink-soft)', padding: '3rem 0' }}>Cargando… Lio ya está olisqueando 🐾</div>}>
           <ScreenRouter />
         </Suspense>
       </AppShell>

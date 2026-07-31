@@ -78,7 +78,7 @@ export default function StatsScreen() {
           <h2>Favorito/a de Lio 💕</h2>
           {fav ? (
             <>
-              <p className="big" style={{ fontSize: '1.4rem' }}>🐩 {memberName(doc, fav.memberId)}</p>
+              <p className="big" style={{ fontSize: '1.4rem' }}>🐾 {memberName(doc, fav.memberId)}</p>
               <p className="cap">{fav.walks} {fav.walks === 1 ? 'paseo' : 'paseos'} este mes</p>
             </>
           ) : <p className="cap">Lio aún no tiene favorito/a.</p>}

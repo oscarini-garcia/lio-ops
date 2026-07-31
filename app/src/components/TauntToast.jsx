@@ -3,7 +3,7 @@ import { useStore, useDispatch } from '../hooks/useStore.jsx'
 
 export const TAUNTS = [
   '¡Lio aprueba este paseo! 🐾',
-  'Caniche contento, casa en paz 🐩',
+  'Caniche contento, casa en paz 🐾',
   'Otro amanecer conquistado 🌅',
   'Lio ya te quiere un 3% más 💕',
   'Huele a campeón/a de la mañana 🏆',

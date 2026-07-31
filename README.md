@@ -1,4 +1,4 @@
-# 🐩 Las Mañanas de Lio
+# 🐾 Las Mañanas de Lio
 
 App familiar que responde una pregunta cada mañana: **¿a quién le toca sacar a
 Lio?** (Lio es un caniche toy negro con opiniones firmes sobre los horarios.)
